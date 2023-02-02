@@ -17,6 +17,17 @@ import java.util.List;
  * name, which is of type varchar(255).
  */
 public class AuthorDAO {
+    private enum sqlQuery {
+        getAll       ("SELECT * FROM author"),
+        insertAuthor ("INSERT INTO author (name) VALUES ( ? )")
+        ;
+        private final String query;
+        sqlQuery(String query)
+        {
+            this.query = query;
+        }
+        public String toString(){return this.query;}
+    }
 
     /**
      * TODO: retrieve all authors from the Author table.
@@ -28,7 +39,7 @@ public class AuthorDAO {
         List<Author> authors = new ArrayList<>();
         try {
             //Write SQL logic here
-            String sql = "change me";
+            String sql = sqlQuery.getAll.toString();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
@@ -52,10 +63,11 @@ public class AuthorDAO {
         try {
 //          Write SQL logic here. You should only be inserting with the name column, so that the database may
 //          automatically generate a primary key.
-            String sql = "change me" ;
+            String sql = sqlQuery.insertAuthor.toString() ;
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             //write preparedStatement's setString method here.
+            preparedStatement.setString(1, author.getName());
             
             preparedStatement.executeUpdate();
             ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();

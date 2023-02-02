@@ -22,6 +22,19 @@ import java.util.List;
  * copies_available, which is of type int.
  */
 public class BookDAO {
+    private enum sqlQuery {
+        getAll        ("SELECT * FROM book"),
+        getBookByIsbn ("SELECT * FROM book WHERE isbn = ? "),
+        insertBook    ("INSERT INTO book (isbn, author_id, title, copies_available) VALUES ( ?, ?, ?, ? )"),
+        getBooksWithBookCountOverZero ("SELECT * FROM book WHERE copies_available > ? ")
+        ;
+        private final String query;
+        sqlQuery(String query)
+        {
+            this.query = query;
+        }
+        public String toString(){return this.query;}
+    }
     /**
      * TODO: retrieve all books from the Book table.
      * You only need to change the sql String.
@@ -32,7 +45,7 @@ public class BookDAO {
         List<Book> books = new ArrayList<>();
         try {
             //Write SQL logic here
-            String sql = "change me";
+            String sql = sqlQuery.getAll.toString();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
@@ -57,10 +70,11 @@ public class BookDAO {
         Connection connection = ConnectionUtil.getConnection();
         try {
             //Write SQL logic here
-            String sql = "change me";
+            String sql = sqlQuery.getBookByIsbn.toString();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             //write preparedStatement's setInt method here.
+            preparedStatement.setInt(1, isbn);
 
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
@@ -87,10 +101,14 @@ public class BookDAO {
         Connection connection = ConnectionUtil.getConnection();
         try {
             //Write SQL logic here
-            String sql = "change me" ;
+            String sql = sqlQuery.insertBook.toString() ;
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             //write preparedStatement's setString and setInt methods here.
+            preparedStatement.setInt(1, book.getIsbn());
+            preparedStatement.setInt(2, book.getAuthor_id());
+            preparedStatement.setString(3, book.getTitle());
+            preparedStatement.setInt(4, book.getCopies_available());
 
             preparedStatement.executeUpdate();
             return book;
@@ -109,10 +127,11 @@ public class BookDAO {
         List<Book> books = new ArrayList<>();
         try {
             //Write SQL logic here
-            String sql = "change me";
+            String sql = sqlQuery.getBooksWithBookCountOverZero.toString();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             //write preparedStatement's setInt method here.
+            preparedStatement.setInt(1, 0);
 
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
